@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NO CODE AI</title>
+</head>
+<body>
+    <h1>Welcome to NO CODE AI</h1>
+
+    <h2>Upload your dataset</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="fileInput" name="file"/>
+        <button type="submit">Upload</button>
+    </form>
+
+    <h2>Data Analysis</h2>
+    <button id="analyzeData">Analyze Data</button>
+    <div id="analysisResult"></div>
+
+    <h2>Data Engineering</h2>
+    <button id="engineerData">Transform Data</button>
+    <div id="engineeringResult"></div>
+
+    <h2>Modeling</h2>
+    <label for="model">Choose a model:</label>
+    <select id="model">
+        <option value="rf">Random Forest</option>
+        <option value="logistic">Logistic Regression</option>
+        <option value="nn">Neural Network</option>
+    </select>
+    <button id="trainModel">Train Model</button>
+    <div id="modelResult"></div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            let formData = new FormData();
+            formData.append('file', document.getElementById('fileInput').files[0]);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            }).then(response => response.json())
+            .then(data => {
+                console.log('File uploaded successfully:', data);
+            });
+        });
+
+        document.getElementById('analyzeData').addEventListener('click', function() {
+            fetch('/data-analysis', {
+                method: 'POST',
+                body: JSON.stringify({}), // Send relevant data
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.text())
+            .then(html => {
+                document.getElementById('analysisResult').innerHTML = html;
+            });
+        });
+
+        document.getElementById('engineerData').addEventListener('click', function() {
+            fetch('/data-engineering', {
+                method: 'POST',
+                body: JSON.stringify({}), // Send relevant data
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+            .then(data => {
+                console.log('Data transformed successfully:', data);
+            });
+        });
+
+        document.getElementById('trainModel').addEventListener('click', function() {
+            let model = document.getElementById('model').value;
+
+            fetch(`/modeling?model=${model}`, {
+                method: 'POST',
+                body: JSON.stringify({}), // Send relevant data
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+            .then(data => {
+                document.getElementById('modelResult').innerText = JSON.stringify(data);
+            });
+        });
+    </script>
+</body>
+</html>
